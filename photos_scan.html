@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>index</title>
+		<style type="text/css">
+			*{margin:0px;padding:0px;}
+			#box{
+				width:1430px;
+				height:650px;
+				margin:60px auto;
+				border:1px solid #ddd;
+				box-shadow:0px 0px 5px #ddd;
+				padding:10px;
+				position:relative;
+			}
+			#box .list{
+				width:450px;
+				height:300px;
+				padding:5px;
+				margin:6px 6px 6px 6px;
+				border:1px solid #dedede;
+				box-shadow:0px 0px 5px #dedede;
+				overflow:hidden;
+				_margin:6px 6px 6px 3px;
+				float:left;
+				filter:alpha(opacity=100);
+				opacity:100;
+				background:#FFF;
+			}
+			#box .list img{
+				width:100%;
+				height:100%;
+			}
+			#page{
+				width:480px;
+				height:30px;
+				text-align:center;
+				margin:10px auto;
+			}
+			#page a{
+				padding:3px 8px;
+				background:#FFF;
+				border:1px solid #ddd;
+				text-decoration:none;
+				box-shadow:0px 0px 3px #ddd;
+				color:#333;
+			}
+			#page a.active{
+				background:red;
+			}
+		</style>
+		<script type="text/javascript" src="move.js"></script>
+		<script type="text/javascript">
+			window.onload=function(){
+				var oBox = document.getElementById('box');
+				var aList = getByClass('list',oBox);
+				var aBtn = document.getElementById('page').getElementsByTagName('a');
+				
+				var loadState = true;
+				//布局转换
+
+				var pos = []; //用于存放位置数组
+
+				for(var i=0;i<aList.length;i++){
+					var iLeft = aList[i].offsetLeft;
+					var iTop = aList[i].offsetTop;
+					pos[i] = {left:iLeft,top:iTop}
+					
+				}
+
+				for(var i=0;i<aList.length;i++){
+					//alert(pos[i].top)
+					//alert(pos[i].left)
+					aList[i].style.left = pos[i].left + 'px';
+					aList[i].style.top = pos[i].top + 'px';
+					aList[i].style.position = 'absolute';
+					aList[i].style.margin = 0 +'px';
+				}
+
+				for(var i=0;i<aBtn.length;i++){
+					aBtn[i].index = i;
+					aBtn[i].onclick=function(){
+						if(loadState  === false){
+							return;
+						}
+						loadState =false;
+						for(var m=0;m<aBtn.length;m++){
+							aBtn[m].className = '';
+						}
+						this.className = 'active';
+						aList = getByClass('list',oBox);
+						var data = getData(this.index)
+						var j=aList.length-1;
+						var count=0;
+						var t=setInterval(function(){
+							buffer(aList[j],{
+								left:180,
+								top:180,
+								width:462,
+								height:312,
+								opacity:0
+							},3,function(){
+								oBox.removeChild(this);
+								count++
+								if(count == aList.length){
+									loadList(data);
+								}
+							})
+							j--;
+							if(j == -1){
+								clearInterval(t);
+							}
+						},100)
+						/*
+						for(var j=0;j<aList.length;j++){
+							buffer(aList[j],{
+								left:180,
+								top:180,
+								width:50,
+								height:30,
+								opacity:0
+							},5)
+						}
+						*/
+					}
+				}
+
+				function loadList(data){
+					
+					var i=0;
+					var t=setInterval(function(){
+					
+						/*
+							<div class='list'>
+								<img src='./images/1.jpg'/>
+							</div>
+						*/	
+						
+						var oDiv = document.createElement('div');	
+						var oImg = document.createElement('img');
+						oDiv.className = 'list';
+						oImg.src = data[i];
+						oBox.appendChild(oDiv)
+						oDiv.appendChild(oImg);
+						/*
+
+							{
+								left:180,
+								top:180,
+								width:50,
+								height:30,
+								opacity:0
+							}
+						*/	
+
+
+						oDiv.style.left = 180 +'px';
+						oDiv.style.top = 180 +'px';
+						oDiv.style.width = 50 +'px';
+						oDiv.style.height = 30 +'px';
+						oDiv.style.position= 'absolute';
+						oDiv.style.margin = 0 +'px';
+						fiexible(oDiv,{
+							left:pos[i].left,
+							top:pos[i].top,
+							width:462,
+							height:312
+						})
+						i++;
+						if(i==data.length){
+							loadState = true;
+							clearInterval(t);	
+						}
+					},100)
+				}
+			}
+			//获取数据
+			function getData(page){
+				var start = page*6;
+				var end = start+6;
+				var result = [];
+				//'./images/1.jpg'
+				for(var i=start+1;i<=end;i++){
+					result.push('./images/img'+i+'.jpg')
+				}
+				return result;
+			}
+
+			function getByClass(sName,oParent){
+				var obj =  oParent.getElementsByTagName('*');
+				var result = [];
+				for(var i=0;i<obj.length;i++){
+					if(obj[i].className == sName){
+						result.push(obj[i]);
+					}
+				}
+				return result;
+			}
+
+		</script>
+		
+	</head>
+	<body>
+		<div id="box">
+			<div class='list'>
+				<img src='./images/img1.jpg'/>
+			</div>
+			<div class='list'>
+				<img src='./images/img2.jpg'/>
+			</div>
+			<div class='list'>
+				<img src='./images/img3.jpg'/>
+			</div>
+			<div class='list'>
+				<img src='./images/img4.jpg'/>
+			</div>
+			<div class='list'>
+				<img src='./images/img5.jpg'/>
+			</div>
+			<div class='list'>
+				<img src='./images/img6.jpg'/>
+			</div>
+		</div>
+		<div id="page">
+			<a href="javascript:void(0);" class="active">1</a>
+			<a href="javascript:void(0);">2</a>
+			<a href="javascript:void(0);">3</a>
+		</div>
+	</body>
+</html>
